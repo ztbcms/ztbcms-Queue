@@ -10,4 +10,8 @@ abstract class Job {
 
     abstract function handle();
 
+    abstract function _createJob($queue = '');
+
+//    abstract function _loadJob();
+
 }
