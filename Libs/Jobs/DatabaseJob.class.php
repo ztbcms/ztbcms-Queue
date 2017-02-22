@@ -12,19 +12,13 @@ use Queue\Libs\Job;
 class DatabaseJob extends Job {
 
 
+    /**
+     * 执行任务
+     *
+     * @return mixed
+     */
     function handle() {
         // TODO: Implement handle() method.
-    }
-
-    function _createJob($queue = '') {
-        $data = get_class_vars(get_class($this));
-
-        return [
-            'queue' => $queue,
-            'payload' => json_encode($data),
-            'attempts' => 0,
-            'available_at' => time(),
-            'reserved_at' => 0,
-        ];
+        echo 'it works!';
     }
 }
