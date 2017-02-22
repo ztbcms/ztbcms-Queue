@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `cms_cron`;
+DROP TABLE IF EXISTS `cms_queue_job`;
 CREATE TABLE `cms_queue_job` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `queue` varchar(255) NOT NULL DEFAULT '' COMMENT '队列名称',
