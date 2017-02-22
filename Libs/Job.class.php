@@ -3,11 +3,11 @@
 /**
  * author: Jayin <tonjayin@gmail.com>
  */
-class Job {
 
-    public function handle() {
+namespace Queue\Libs;
 
-    }
+abstract class Job {
 
+    abstract function handle();
 
 }

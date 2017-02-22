@@ -42,7 +42,7 @@ abstract class Queue {
 
     /**
      * @param string $queue
-     * @return \Job|null
+     * @return Job|null
      */
     public function pop($queue = '') {
         return null;

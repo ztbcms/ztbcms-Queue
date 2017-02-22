@@ -52,7 +52,7 @@ class Worker {
      * 获得下一个Job
      *
      * @param string $queue
-     * @return \Job|null
+     * @return Job|null
      */
     protected function getNextJob($queue = '') {
         foreach (explode(',', $queue) as $q) {
@@ -78,7 +78,7 @@ class Worker {
     /**
      * 执行Job
      *
-     * @param \Job          $job
+     * @param Job          $job
      * @param WorkerOptions $options
      */
     private function runJob($job, $options) {
