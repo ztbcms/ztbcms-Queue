@@ -6,6 +6,8 @@
 
 namespace Queue\Libs;
 
+use Think\Exception;
+
 /**
  * Job Worker
  */
@@ -78,11 +80,15 @@ class Worker {
     /**
      * 执行Job
      *
-     * @param Job          $job
+     * @param Job           $job
      * @param WorkerOptions $options
      */
     private function runJob($job, $options) {
-        $job->handle();
+        try {
+            $job->handle();
+        } catch (\Exception $e) {
+            $this->handleException($job);
+        }
     }
 
     /**
@@ -92,6 +98,26 @@ class Worker {
      */
     private function sleep($sleep) {
         sleep($sleep);
+    }
+
+    /**
+     * 标识任务状态
+     *
+     * @param Job $job
+     * @param int $status
+     */
+    protected function markAs($job, $status) {
+        $db = D('Queue\Job');
+        $db->where(['id' => $job->getId()])->save(['status' => $status]);
+    }
+
+    /**
+     * 处理异常
+     *
+     * @param Job $job
+     */
+    protected function handleException(Job $job) {
+        $this->markAs($job, Job::STATUS_ERROR);
     }
 
 }

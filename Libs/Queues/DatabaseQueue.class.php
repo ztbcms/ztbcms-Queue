@@ -56,7 +56,8 @@ class DatabaseQueue extends Queue {
         $job_record = $this->db->where([
             'status' => Job::STATUS_WAITTING,
             'queue' => $queue
-        ])->order('id ASC')->lock(true)->find();
+        ])->order('id ASC')->lock(false)->find();
+        $this->db->commit();
 
         if (empty($job_record)) {
             return null;

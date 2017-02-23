@@ -22,6 +22,10 @@ abstract class Job {
      * 运行状态：已完成
      */
     const STATUS_FINISH = 2;
+    /**
+     * 运行状态：异常
+     */
+    const STATUS_ERROR = 3;
 
     /**
      * 任务ID

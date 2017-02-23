@@ -7,6 +7,6 @@ CREATE TABLE `cms_queue_job` (
   `attempts` tinyint(3) NOT NULL DEFAULT '0' COMMENT '重试次数',
   `reserved_at` int(11) NOT NULL COMMENT '取出时间',
   `available_at` int(11) NOT NULL COMMENT '可用时间',
-  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '任务状态：0排队中,1工作中,2已完成',
+  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '任务状态：0排队中,1工作中,2已完成,3异常',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='队列任务';
