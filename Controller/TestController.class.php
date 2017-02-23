@@ -14,9 +14,7 @@ class TestController extends Base {
 
     function push() {
 
-        $job = new UpdateJob();
-        $job->userid = '111';
-        $job->username = 'jayin';
+        $job = new UpdateJob(111, 'jayin');
 
         $queue = Queue::getInstance();
         $result = $queue->push('high', $job);
@@ -29,6 +27,18 @@ class TestController extends Base {
         $queue = Queue::getInstance();
         $result = $queue->pop('high');
         var_dump($result);
+    }
+
+    function deleteJob(){
+        $queue = Queue::getInstance();
+        $queue->deleteJob(78);
+    }
+
+    function release(){
+        $queue = Queue::getInstance();
+        $job = new UpdateJob(6666, 'test..');
+        $job->setId(79);
+        $queue->release('mid', $job);
     }
 
 }

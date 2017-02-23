@@ -6,8 +6,6 @@
 
 namespace Queue\Libs;
 
-use Think\Exception;
-
 /**
  * Job Worker
  */
@@ -120,7 +118,10 @@ class Worker {
     /**
      * worker 工作前
      */
-    private function beforeRun() { }
+    private function beforeRun() {
+        //清除重启
+        cache('queue_work_stop', null);
+    }
 
     /**
      * 任务完成后回调
@@ -129,6 +130,7 @@ class Worker {
      */
     private function onJobFinish(Job $job) {
         $this->manager->markAs($job, Job::STATUS_FINISH);
+        $this->manager->deleteJob($job->getId());
     }
 
 }

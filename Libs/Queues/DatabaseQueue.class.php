@@ -82,5 +82,37 @@ class DatabaseQueue extends Queue {
      * @param int $status
      */
     public function markAs($job, $status) {
+        $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['status' => $status]);
-    }}
+        $this->db->commit();
+    }
+
+    /**
+     * 删除任务
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function deleteJob($id) {
+        $this->db->startTrans();
+        $this->db->where(['id' => $id])->delete();
+        $this->db->commit();
+    }
+
+    /**
+     * 把Job重新放到待运行队列
+     *
+     * @param string $queue
+     * @param Job    $job
+     * @return mixed
+     */
+    public function release($queue = '', Job $job) {
+        $this->db->startTrans();
+        $this->db->where(['id' => $job->getId()])->lock(true)->save([
+            'queue' => $queue,
+            'status' => Job::STATUS_WAITTING
+        ]);
+        $this->db->commit();
+
+    }
+}

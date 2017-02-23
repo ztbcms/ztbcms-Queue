@@ -126,4 +126,20 @@ abstract class Queue {
      */
     abstract public function markAs($job, $status);
 
+    /**
+     * 删除任务
+     *
+     * @param $id
+     * @return mixed
+     */
+    abstract public function deleteJob($id);
+
+    /**
+     * 把Job重新
+     * @param string $queue
+     * @param Job    $job
+     * @return mixed
+     */
+    abstract public function release($queue = '', Job $job);
+
 }
