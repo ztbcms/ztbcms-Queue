@@ -74,12 +74,13 @@ class DatabaseQueue extends Queue {
         return $job;
     }
 
+
     /**
+     * 标识任务状态
+     *
      * @param Job $job
      * @param int $status
      */
-    private function markAs($job, $status) {
+    public function markAs($job, $status) {
         $this->db->where(['id' => $job->getId()])->save(['status' => $status]);
-    }
-
-}
+    }}

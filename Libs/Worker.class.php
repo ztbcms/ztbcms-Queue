@@ -88,6 +88,7 @@ class Worker {
     private function runJob($job, $options) {
         try {
             $job->handle();
+            $this->onJobFinish($job);
         } catch (\Exception $e) {
             $this->handleException($job);
         }
@@ -103,28 +104,26 @@ class Worker {
     }
 
     /**
-     * 标识任务状态
-     *
-     * @param Job $job
-     * @param int $status
-     */
-    protected function markAs($job, $status) {
-        $db = D('Queue\Job');
-        $db->where(['id' => $job->getId()])->save(['status' => $status]);
-    }
-
-    /**
      * 处理异常
      *
      * @param Job $job
      */
     protected function handleException(Job $job) {
-        $this->markAs($job, Job::STATUS_ERROR);
+        $this->manager->markAs($job, Job::STATUS_ERROR);
     }
 
     /**
      * worker 工作前
      */
     private function beforeRun() { }
+
+    /**
+     * 任务完成后回调
+     *
+     * @param Job $job
+     */
+    private function onJobFinish(Job $job) {
+        $this->manager->markAs($job, Job::STATUS_FINISH);
+    }
 
 }

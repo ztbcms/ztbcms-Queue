@@ -72,7 +72,16 @@ abstract class Queue {
      * @internal param $data
      * @return Job
      */
-    public function asJob($job_id, $name, $queue = '', $playload = '', $attempts = 0, $reserved_at = 0, $available_at = 0, $status){
+    public function asJob(
+        $job_id,
+        $name,
+        $queue = '',
+        $playload = '',
+        $attempts = 0,
+        $reserved_at = 0,
+        $available_at = 0,
+        $status
+    ) {
 
         $playload = json_decode($playload, true);
 
@@ -87,9 +96,7 @@ abstract class Queue {
 
         //properties
         $properties = get_class_vars(get_class($job));
-
         foreach ($properties as $key => $val) {
-            echo $key .'=>' . $playload[$key] . '\n';
             $job->$key = $playload[$key];
         }
 
@@ -97,12 +104,21 @@ abstract class Queue {
     }
 
     /**
+     *实例化Job类
      *
      * @param $name
      * @return Job
      */
-    protected function instanceJob($name){
+    protected function instanceJob($name) {
         return new $name;
     }
+
+    /**
+     * 标识任务状态
+     *
+     * @param Job $job
+     * @param int $status
+     */
+    abstract public function markAs($job, $status);
 
 }
