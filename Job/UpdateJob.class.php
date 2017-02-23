@@ -6,14 +6,14 @@
 
 namespace Queue\Job;
 
-use Queue\Libs\Jobs\DatabaseJob;
+use Queue\Libs\Job;
 
-class UpdateJob extends DatabaseJob {
+class UpdateJob extends Job {
 
     public $userid;
     public $username;
 
     public function handle() {
-        // TODO: Implement handle() method.
+        echo 'update user: ' . $this->userid . ' \r\n';
     }
 }

@@ -35,6 +35,8 @@ class Worker {
      */
     public function run($queue = '', WorkerOptions $options) {
 
+        $this->beforeRun();
+
         while (true) {
             $job = $this->getNextJob($queue);
             if ($job) {
@@ -119,5 +121,10 @@ class Worker {
     protected function handleException(Job $job) {
         $this->markAs($job, Job::STATUS_ERROR);
     }
+
+    /**
+     * worker 工作前
+     */
+    private function beforeRun() { }
 
 }
