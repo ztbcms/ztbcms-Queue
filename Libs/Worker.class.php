@@ -76,6 +76,11 @@ class Worker {
      * @return bool
      */
     private function stopIfNecessary($options) {
+        $stop_signal = cache('queue_work_stop');
+        if ($stop_signal == Queue::SIGNAL_STOP) {
+            return true;
+        }
+
         return false;
     }
 

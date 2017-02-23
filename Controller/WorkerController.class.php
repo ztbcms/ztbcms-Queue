@@ -10,11 +10,14 @@ use Queue\Libs\Queue;
 use Queue\Libs\Worker;
 use Queue\Libs\WorkerOptions;
 
+/**
+ * 任务管理
+ */
 class WorkerController extends QueueController {
 
 
     /**
-     * 入口
+     * 监听任务队列
      */
     public function run() {
         //指定开启的队列,从左到右，优先级别由高到低
@@ -25,4 +28,12 @@ class WorkerController extends QueueController {
         $workerOptions = new WorkerOptions(C('QUEUE_SLEEP'));
         $worker->run($queue, $workerOptions);
     }
+
+    /**
+     * 平滑停止监听任务队列
+     */
+    public function stop() {
+        cache('queue_work_stop', '1');
+    }
+
 }

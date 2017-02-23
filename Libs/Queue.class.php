@@ -11,6 +11,11 @@ use Queue\Libs\Queues\DatabaseQueue;
 abstract class Queue {
 
     /**
+     * 停止的信息号
+     */
+    const SIGNAL_STOP = 1;
+
+    /**
      * @var Queue
      */
     private static $queue;
