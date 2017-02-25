@@ -24,9 +24,10 @@ class WorkerController extends QueueController {
         $queue = I('get.queue', '');
 
         $queue_manager = Queue::getInstance();
-        $worker = new Worker($queue_manager);
-        $workerOptions = new WorkerOptions(C('QUEUE_SLEEP'));
-        $worker->run($queue, $workerOptions);
+        $workerOptions = new WorkerOptions(C('QUEUE_SLEEP'), C('QUEUE_MAX_RETRY'));
+        $worker = new Worker($queue_manager, $workerOptions);
+
+        $worker->run($queue);
     }
 
     /**

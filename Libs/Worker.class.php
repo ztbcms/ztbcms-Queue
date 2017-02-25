@@ -15,36 +15,40 @@ class Worker {
      * @var Queue
      */
     protected $manager;
+    /**
+     * @var WorkerOptions
+     */
+    protected $options;
 
     /**
      * Worker constructor.
      *
-     * @param Queue $queue
+     * @param Queue         $queue
+     * @param WorkerOptions $options
      */
-    public function __construct(Queue $queue) {
+    public function __construct(Queue $queue, WorkerOptions $options) {
         $this->manager = $queue;
     }
 
     /**
      * 执行任务
      *
-     * @param string        $queue
-     * @param WorkerOptions $options
+     * @param string $queue
      */
-    public function run($queue = '', WorkerOptions $options) {
+    public function run($queue = '') {
 
         $this->beforeRun();
 
         while (true) {
             $job = $this->getNextJob($queue);
             if ($job) {
-                $this->runJob($job, $options);
+                $this->runJob($job);
             } else {
-                $this->sleep($options->sleep);
+                $this->sleep($this->options->sleep);
             }
 
             //
-            if ($this->stopIfNecessary($options)) {
+            if ($this->stopIfNecessary()) {
                 break;
             }
         }
@@ -70,10 +74,9 @@ class Worker {
     /**
      * 检测是否需要停止队列
      *
-     * @param WorkerOptions $options
      * @return bool
      */
-    private function stopIfNecessary($options) {
+    private function stopIfNecessary() {
         $stop_signal = cache('queue_work_stop');
         if ($stop_signal == Queue::SIGNAL_STOP) {
             return true;
@@ -85,10 +88,9 @@ class Worker {
     /**
      * 执行Job
      *
-     * @param Job           $job
-     * @param WorkerOptions $options
+     * @param Job $job
      */
-    private function runJob($job, $options) {
+    private function runJob($job) {
         try {
             $job->handle();
             $this->onJobFinish($job);
