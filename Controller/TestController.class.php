@@ -20,29 +20,28 @@ class TestController extends Base {
         $queue = Queue::getInstance();
         $result = $queue->push('high', $job);
         var_dump($result);
-
-//        var_dump(get_class_vars('Queue\Job\UpdateJob'));
     }
 
-    function pop(){
+    function pop() {
         $queue = Queue::getInstance();
         $result = $queue->pop('high');
         var_dump($result);
     }
 
-    function deleteJob(){
+    function deleteJob() {
         $queue = Queue::getInstance();
         $queue->deleteJob(78);
     }
 
-    function release(){
+    function release() {
         $queue = Queue::getInstance();
         $job = new UpdateJob(6666, 'test..');
         $job->setId(79);
         $queue->release('mid', $job);
     }
 
-    function pushExcetionJob(){
+    //模拟异常任务
+    function pushExcetionJob() {
         $job = new ExcetionJob();
 
         $queue = Queue::getInstance();
