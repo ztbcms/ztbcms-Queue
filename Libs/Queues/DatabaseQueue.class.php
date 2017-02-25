@@ -109,6 +109,7 @@ class DatabaseQueue extends Queue {
     public function release($queue = '', Job $job) {
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->lock(true)->save([
+            'attempts' => $job->getAttempts() + 1,
             'queue' => $queue,
             'status' => Job::STATUS_WAITTING
         ]);

@@ -28,6 +28,7 @@ class Worker {
      */
     public function __construct(Queue $queue, WorkerOptions $options) {
         $this->manager = $queue;
+        $this->options = $options;
     }
 
     /**
@@ -44,7 +45,7 @@ class Worker {
             if ($job) {
                 $this->runJob($job);
             } else {
-                $this->sleep($this->options->sleep);
+                $this->sleep($this->options->getSleep());
             }
 
             //
@@ -90,12 +91,12 @@ class Worker {
      *
      * @param Job $job
      */
-    private function runJob($job) {
+    private function runJob(Job $job) {
         try {
             $job->handle();
             $this->onJobFinish($job);
         } catch (\Exception $e) {
-            $this->handleException($job);
+            $this->handleException($job->getQueue(), $job);
         }
     }
 
@@ -111,10 +112,16 @@ class Worker {
     /**
      * 处理异常
      *
-     * @param Job $job
+     * @param string $queue
+     * @param Job    $job
      */
-    protected function handleException(Job $job) {
-        $this->manager->markAs($job, Job::STATUS_ERROR);
+    protected function handleException($queue = '', Job $job) {
+        if ($job->getAttempts() < $this->options->getMaxRetry()) {
+            $this->manager->release($queue, $job);
+        } else {
+            $this->manager->markAs($job, Job::STATUS_ERROR);
+        }
+
     }
 
     /**
