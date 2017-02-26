@@ -6,16 +6,14 @@
 
 namespace Queue\Controller;
 
-use Common\Controller\Base;
-use Queue\Job\ExcetionJob;
-use Queue\Job\UpdateJob;
+use Queue\Jobs\ExcetionJob;
+use Queue\Jobs\UpdateJob;
 use Queue\Libs\Queue;
 
-class TestController extends Base {
+class TestController extends QueueController {
 
     function push() {
-
-        $job = new UpdateJob(time(), 'jayin');
+        $job = new UpdateJob(time(), 'ztbcms');
 
         $queue = Queue::getInstance();
         $result = $queue->push('high', $job);

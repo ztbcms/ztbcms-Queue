@@ -4,7 +4,7 @@
  * author: Jayin <tonjayin@gmail.com>
  */
 
-namespace Queue\Job;
+namespace Queue\Jobs;
 
 use Queue\Libs\Job;
 
