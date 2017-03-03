@@ -11,7 +11,7 @@ return array(
     //模块简介
     'introduce' => '队列',
     //模块介绍地址
-    'address' => 'http://www.ztbcms.com',
+    'address' => 'http://doc.ztbcms.com/module/queue/',
     //模块作者
     'author' => 'ZTBCMS',
     //作者地址
