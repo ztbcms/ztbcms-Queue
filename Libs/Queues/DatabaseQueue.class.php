@@ -68,6 +68,7 @@ class DatabaseQueue extends Queue {
 
         //标志
         $this->markAs($job, Job::STATUS_WORKING);
+        $this->updateJob($job->getId(), ['reserved_at' => time()]);
 
         $this->db->commit();
 
@@ -82,8 +83,18 @@ class DatabaseQueue extends Queue {
      * @param int $status
      */
     public function markAs($job, $status) {
+        $this->updateJob($job->getId(), ['status' => $status]);
+    }
+
+    /**
+     * 更新Job
+     *
+     * @param string $job_id
+     * @param array $data
+     */
+    public function updateJob($job_id, array $data){
         $this->db->startTrans();
-        $this->db->where(['id' => $job->getId()])->save(['status' => $status]);
+        $this->db->where(['id' => $job_id])->save($data);
         $this->db->commit();
     }
 
