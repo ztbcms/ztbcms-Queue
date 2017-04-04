@@ -139,7 +139,6 @@ class Worker {
      */
     private function onJobFinish(Job $job) {
         $this->manager->markAs($job, Job::STATUS_FINISH);
-        $this->manager->deleteJob($job->getId());
     }
 
 }
