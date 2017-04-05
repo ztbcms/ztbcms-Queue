@@ -9,7 +9,47 @@
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">任务列表</h3>
-                            <section>
+                            <section style="margin-top: 8px;">
+                                <div class="row">
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">任务名称</span>
+                                                <input type="text" class="form-control" placeholder="" name="phone" v-model="value.name">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">队列</span>
+                                                <input type="text" class="form-control" placeholder="" name="phone" v-model="value.queue">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">状态</span>
+                                                <select name="status" class="form-control" v-model="value.status">
+                                                    <option value="">全部</option>
+                                                    <option value="0">排队中</option>
+                                                    <option value="1">工作中</option>
+                                                    <option value="2">已完成</option>
+                                                    <option value="3">异常</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <button class="btn btn-success" @click="doSearch">确认</button>
+                                    </div>
+
+                                </div>
 
                             </section>
                         </div>
@@ -47,7 +87,7 @@
                                 <div class="col-sm-12">
                                     <div class="dataTables_paginate paging_simple_numbers" >
                                         <button class="btn btn-primary" @click="prePage">前一页</button>
-                                        <div style="display: inline;font-size: 16px;margin-left: 10px;margin-right: 10px;"><span>{{ page }}</span> / <span>{{ pageCount }}</span></div>
+                                        <div style="display: inline;font-size: 16px;margin-left: 10px;margin-right: 10px;"><span>{{ page }}</span> / <span>{{ pageCount }}</span><span> 总数: {{ amount }}</span></div>
                                         <button class="btn btn-primary" @click="nextPage">下一页</button>
                                         <input type="text" class="form-control input-sm" style="width: 70px;display: inline" placeholder="跳转页码" v-model="redirect_page">
                                         <button class="btn btn-primary" @click="goPage">GO</button>
@@ -78,9 +118,21 @@
                     amount: 0,
                     items: [],
                     redirect_page: '', //跳转页
-                    filter: {},
-                    operator: {},
-                    value: {},
+                    filter: {
+                        'name' : 'name',
+                        'queue' : 'queue',
+                        'status' : 'status'
+                    },
+                    operator: {
+                        'name' : 'LIKE',
+                        'queue' : 'LIKE',
+                        'status' : 'EQ'
+                    },
+                    value: {
+                        'name' : '',
+                        'queue' : '',
+                        'status' : ''
+                    },
                 },
                 mounted: function(){
                     this.getJobList();
