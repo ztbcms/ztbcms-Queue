@@ -77,7 +77,20 @@
                                         <td>{{ item.attempts }}</td>
                                         <td>{{ item.available_at | DateFormat }}</td>
                                         <td>{{ item.reserved_at | DateFormat }}</td>
-                                        <td>{{ item.status | JobStatus }}</td>
+                                        <td>
+                                            <template v-if="item.status == 0">
+                                                <span class="label label-warning">排队中</span>
+                                            </template>
+                                            <template v-if="item.status == 1">
+                                                <span class="label label-info">工作中</span>
+                                            </template>
+                                            <template v-if="item.status == 2">
+                                                <span class="label label-success">已完成</span>
+                                            </template>
+                                            <template v-if="item.status == 3">
+                                                <span class="label label-danger">异常</span>
+                                            </template>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -138,25 +151,6 @@
                     this.getJobList();
                 },
                 filters: {
-                    JobStatus: function(val){
-                        val = parseInt(val);
-                        switch (val){
-                            //'任务状态：0排队中,1工作中,2已完成,3异常',
-                            case 0:
-                                val =  '排队中';
-                                break;
-                            case 1:
-                                val = '工作中';
-                                break;
-                            case 2:
-                                val = '已完成';
-                                break;
-                            case 3:
-                                val = '异常';
-                                break;
-                        }
-                        return val;
-                    },
                     /**
                      *
                      * @param val
