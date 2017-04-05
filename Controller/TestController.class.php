@@ -20,6 +20,15 @@ class TestController extends QueueController {
         var_dump($result);
     }
 
+    //延时
+    function pushWithDelete() {
+        $job = new UpdateJob(time(), 'delete Job!');
+
+        $queue = Queue::getInstance();
+        $result = $queue->push('high', $job, 15); //
+        var_dump($result);
+    }
+
     function pop() {
         $queue = Queue::getInstance();
         $result = $queue->pop('high');

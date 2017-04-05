@@ -30,15 +30,16 @@ class DatabaseQueue extends Queue {
      *
      * @param string $queue
      * @param Job    $job
+     * @param int    $delay
      * @return mixed
      */
-    function push($queue = '', Job $job) {
+    function push($queue = '', Job $job, $delay = 0) {
         $job_data = [
             'name' => get_class($job),
             'queue' => $queue,
             'payload' => json_encode(static::createPlayload($job)),
             'attempts' => 0,
-            'available_at' => time(),
+            'available_at' => time() + $delay,
             'reserved_at' => 0,
         ];
 
@@ -55,8 +56,9 @@ class DatabaseQueue extends Queue {
         $this->db->startTrans();
         $job_record = $this->db->where([
             'status' => Job::STATUS_WAITTING,
-            'queue' => $queue
-        ])->order('id ASC')->lock(true)->find();
+            'queue' => $queue,
+            'available_at' => ['ELT', time()]
+        ])->order('available_at ASC, id ASC')->lock(true)->find();
         $this->db->commit();
 
         if (empty($job_record)) {

@@ -35,11 +35,12 @@ abstract class Queue {
     /**
      * 添加
      *
-     * @param string $queue
-     * @param Job    $job
+     * @param string $queue 队列名称
+     * @param Job    $job 工作任务
+     * @param int    $delay 延迟时长，单位：秒
      * @return Job
      */
-    abstract function push($queue = '', Job $job);
+    abstract function push($queue = '', Job $job, $delay = 0);
 
     /**
      * 取出
