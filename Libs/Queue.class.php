@@ -21,7 +21,7 @@ abstract class Queue {
     private static $queue;
 
     /**
-     * @return Queue|DatabaseQueue
+     * @return Queue
      */
     static function getInstance() {
         if (empty(static::$queue)) {
