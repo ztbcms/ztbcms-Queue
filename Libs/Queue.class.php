@@ -36,7 +36,7 @@ abstract class Queue {
      * 添加
      *
      * @param string $queue 队列名称
-     * @param Job    $job 工作任务
+     * @param Job    $job   工作任务
      * @param int    $delay 延迟时长，单位：秒
      * @return Job
      */
@@ -56,7 +56,7 @@ abstract class Queue {
      * @param Job $job
      * @return array
      */
-    public function createPlayload($job) {
+    function createPlayload($job) {
         $properties = get_class_vars(get_class($job));
         $ret = array();
         foreach ($properties as $key => $val) {
@@ -78,7 +78,7 @@ abstract class Queue {
      * @internal param $data
      * @return Job
      */
-    public function asJob(
+    function asJob(
         $job_id,
         $name,
         $queue = '',
@@ -125,7 +125,39 @@ abstract class Queue {
      * @param Job $job
      * @param int $status
      */
-    abstract public function markAs($job, $status);
+    abstract function markAs($job, $status);
+
+    /**
+     * 任务工作开始时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    abstract function startJob(Job $job);
+
+    /**
+     * 任务工作结束时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    abstract function endJob(Job $job);
+
+    /**
+     * 任务工作异常时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    abstract function faildJob(Job $job);
+
+    /**
+     * 任务成功执行完成时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    abstract function successJob(Job $job);
 
     /**
      * 删除任务
@@ -133,14 +165,14 @@ abstract class Queue {
      * @param $id
      * @return mixed
      */
-    abstract public function deleteJob($id);
+    abstract function deleteJob($id);
 
     /**
      * 把Job重新
-     * @param string $queue
+     *
      * @param Job    $job
      * @return mixed
      */
-    abstract public function release($queue = '', Job $job);
+    abstract function release(Job $job);
 
 }

@@ -10,22 +10,6 @@ namespace Queue\Libs;
  * 任务
  */
 abstract class Job {
-    /**
-     * 运行状态：排队中
-     */
-    const STATUS_WAITTING = 0;
-    /**
-     * 运行状态：工作中
-     */
-    const STATUS_WORKING = 1;
-    /**
-     * 运行状态：已完成
-     */
-    const STATUS_FINISH = 2;
-    /**
-     * 运行状态：异常
-     */
-    const STATUS_ERROR = 3;
 
     /**
      * 任务ID
@@ -39,6 +23,9 @@ abstract class Job {
     protected $reserved_at;
     protected $available_at;
     protected $status;
+    protected $start_time;
+    protected $end_time;
+    protected $result;
 
 
     /**
@@ -61,7 +48,7 @@ abstract class Job {
     /**
      * 任务执行出现异常时的回调
      */
-    function onError(){ }
+    function onError() { }
 
     /**
      * @return mixed
@@ -160,4 +147,48 @@ abstract class Job {
     public function setStatus($status) {
         $this->status = $status;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStartTime() {
+        return $this->start_time;
+    }
+
+    /**
+     * @param mixed $start_time
+     */
+    public function setStartTime($start_time) {
+        $this->start_time = $start_time;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEndTime() {
+        return $this->end_time;
+    }
+
+    /**
+     * @param mixed $end_time
+     */
+    public function setEndTime($end_time) {
+        $this->end_time = $end_time;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResult() {
+        return $this->result;
+    }
+
+    /**
+     * @param mixed $result
+     */
+    public function setResult($result) {
+        $this->result = $result;
+    }
+
+
 }

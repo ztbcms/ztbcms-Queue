@@ -6,6 +6,8 @@
 
 namespace Queue\Libs;
 
+use Think\Log;
+
 /**
  * Job Worker
  */
@@ -92,14 +94,22 @@ class Worker {
      * @param Job $job
      */
     private function runJob(Job $job) {
+        $work_result = true; // 任务执行结果，默认是成功
         try {
+            $this->onJobStart($job);
+
             $job->beforeHandle();
             $job->handle();
+
+            $this->onJobSuccess($job);
         } catch (\Exception $e) {
-            $this->handleException($job->getQueue(), $job);
+            $work_result = false;
+            $this->onJobFaild($job);
+
+            $this->handleException($job);
             $job->onError();
         } finally {
-            $this->onJobFinish($job);
+            $this->onJobFinish($job, $work_result);
             $job->afterHandle();
         }
     }
@@ -116,16 +126,10 @@ class Worker {
     /**
      * 处理异常
      *
-     * @param string $queue
-     * @param Job    $job
+     * @param Job $job
      */
-    protected function handleException($queue = '', Job $job) {
-        if ($job->getAttempts() < $this->options->getMaxRetry()) {
-            $this->manager->release($queue, $job);
-        } else {
-            $this->manager->markAs($job, Job::STATUS_ERROR);
-        }
-
+    protected function handleException(Job $job) {
+        $this->onJobFaild($job);
     }
 
     /**
@@ -141,8 +145,53 @@ class Worker {
      *
      * @param Job $job
      */
-    private function onJobFinish(Job $job) {
-        $this->manager->markAs($job, Job::STATUS_FINISH);
+    protected function onJobStart(Job $job) {
+        $this->manager->startJob($job);
     }
+
+    /**
+     * 任务完成后回调
+     *
+     * @param Job  $job
+     * @param bool $work_result
+     */
+    protected function onJobFinish(Job $job, $work_result = true) {
+        $this->manager->endJob($job);
+
+        //失败时考虑重试
+        if (!$work_result) {
+            if ($job->getAttempts() < $this->options->getMaxRetry()) {
+                $this->onJobRelease($job);
+            }
+        }
+    }
+
+    /**
+     * 任务完成后回调
+     *
+     * @param Job $job
+     */
+    protected function onJobSuccess(Job $job) {
+        $this->manager->successJob($job);
+    }
+
+    /**
+     * 任务完成后回调
+     *
+     * @param Job $job
+     */
+    protected function onJobFaild(Job $job) {
+        $this->manager->faildJob($job);
+    }
+
+    /**
+     * 任务完成后回调
+     *
+     * @param Job $job
+     */
+    protected function onJobRelease(Job $job) {
+        $this->manager->release($job);
+    }
+
 
 }

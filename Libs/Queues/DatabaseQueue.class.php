@@ -9,6 +9,7 @@ namespace Queue\Libs\Queues;
 use Queue\Libs\Job;
 use Queue\Libs\Queue;
 use Queue\Model\JobModel;
+use Think\Log;
 
 /**
  * 基于数据库的队列
@@ -55,9 +56,10 @@ class DatabaseQueue extends Queue {
     function pop($queue = '') {
         $this->db->startTrans();
         $job_record = $this->db->where([
-            'status' => Job::STATUS_WAITTING,
+            'status' => JobModel::STATUS_WAITTING,
             'queue' => $queue,
-            'available_at' => ['ELT', time()]
+            'available_at' => ['ELT', time()],
+            'reserved_at' => 0, //未取出的
         ])->order('available_at ASC, id ASC')->lock(true)->find();
         $this->db->commit();
 
@@ -69,7 +71,6 @@ class DatabaseQueue extends Queue {
             $job_record['attempts'], $job_record['reserved_at'], $job_record['available_at'], $job_record['status']);
 
         //标志
-        $this->markAs($job, Job::STATUS_WORKING);
         $this->updateJob($job->getId(), ['reserved_at' => time()]);
 
         $this->db->commit();
@@ -92,9 +93,9 @@ class DatabaseQueue extends Queue {
      * 更新Job
      *
      * @param string $job_id
-     * @param array $data
+     * @param array  $data
      */
-    public function updateJob($job_id, array $data){
+    public function updateJob($job_id, array $data) {
         $this->db->startTrans();
         $this->db->where(['id' => $job_id])->save($data);
         $this->db->commit();
@@ -115,18 +116,67 @@ class DatabaseQueue extends Queue {
     /**
      * 把Job重新放到待运行队列
      *
-     * @param string $queue
      * @param Job    $job
      * @return mixed
      */
-    public function release($queue = '', Job $job) {
+    public function release(Job $job) {
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->lock(true)->save([
+            'reserved_at' => 0, //清空取出时间
             'attempts' => $job->getAttempts() + 1,
-            'queue' => $queue,
-            'status' => Job::STATUS_WAITTING
+            'status' => JobModel::STATUS_WAITTING
         ]);
         $this->db->commit();
 
+    }
+
+    /**
+     * 任务工作开始时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    function startJob(Job $job) {
+        $this->db->startTrans();
+        $this->db->where(['id' => $job->getId()])->save(['start_time' => time(), JobModel::STATUS_WORKING]);
+        $this->db->commit();
+    }
+
+    /**
+     * 任务工作结束时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    function endJob(Job $job) {
+        $this->db->startTrans();
+        $this->db->where(['id' => $job->getId()])->save(['end_time' => time(), 'status' => JobModel::STATUS_FINISH]);
+        $this->db->commit();
+    }
+
+    /**
+     * 任务工作异常时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    function faildJob(Job $job) {
+        Log::write('faildJob!!');
+        $this->db->startTrans();
+        $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_ERROR]);
+        $this->db->commit();
+    }
+
+    /**
+     * 任务成功执行完成时
+     *
+     * @param Job $job
+     * @return mixed
+     */
+    function successJob(Job $job) {
+        Log::write('successJob!!');
+        $this->db->startTrans();
+        $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_SUCCESS]);
+        $this->db->commit();
     }
 }
