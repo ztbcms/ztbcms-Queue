@@ -93,10 +93,14 @@ class Worker {
      */
     private function runJob(Job $job) {
         try {
+            $job->beforeHandle();
             $job->handle();
-            $this->onJobFinish($job);
         } catch (\Exception $e) {
             $this->handleException($job->getQueue(), $job);
+            $job->onError();
+        } finally {
+            $this->onJobFinish($job);
+            $job->afterHandle();
         }
     }
 

@@ -40,6 +40,29 @@ abstract class Job {
     protected $available_at;
     protected $status;
 
+
+    /**
+     * 执行任务前
+     */
+    function beforeHandle() { }
+
+    /**
+     * 执行任务
+     *
+     * @return mixed
+     */
+    abstract function handle();
+
+    /**
+     * 执行任务后
+     */
+    function afterHandle() { }
+
+    /**
+     * 任务执行出现异常时的回调
+     */
+    function onError(){ }
+
     /**
      * @return mixed
      */
@@ -137,13 +160,4 @@ abstract class Job {
     public function setStatus($status) {
         $this->status = $status;
     }
-
-
-    /**
-     * 执行任务
-     *
-     * @return mixed
-     */
-    abstract function handle();
-
 }

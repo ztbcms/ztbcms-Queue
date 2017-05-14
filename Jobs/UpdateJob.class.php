@@ -7,6 +7,7 @@
 namespace Queue\Jobs;
 
 use Queue\Libs\Job;
+use Think\Log;
 
 class UpdateJob extends Job {
 
@@ -24,8 +25,20 @@ class UpdateJob extends Job {
         $this->username = $username;
     }
 
+    function beforeHandle() {
+        Log::write(__CLASS__ . ':' . 'beforeHandle');
+    }
 
     public function handle() {
+        Log::write(__CLASS__ . ':' . 'handle');
         echo 'update user: ' . $this->userid . ' \r\n';
+    }
+
+    function afterHandle() {
+        Log::write(__CLASS__ . ':' . 'afterHandle');
+    }
+
+    function onError() {
+        Log::write(__CLASS__ . ':' . 'onError');
     }
 }
