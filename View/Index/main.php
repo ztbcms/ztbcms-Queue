@@ -8,7 +8,7 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">任务列表</h3>
+                            <h3 class="box-title">Job列表</h3>
                             <section style="margin-top: 8px;">
                                 <div class="row">
 
@@ -33,13 +33,12 @@
                                     <div class="col-sm-2">
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <span class="input-group-addon">状态</span>
+                                                <span class="input-group-addon">当前状态</span>
                                                 <select name="status" class="form-control" v-model="value.status">
                                                     <option value="">全部</option>
                                                     <option value="0">排队中</option>
                                                     <option value="1">工作中</option>
                                                     <option value="2">已完成</option>
-                                                    <option value="3">异常</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -64,8 +63,12 @@
                                         <th>数据</th>
                                         <th>重试次数</th>
                                         <th>可用时间</th>
-                                        <th>取出时间</th>
-                                        <th>状态</th>
+                                        <th>出队时间</th>
+                                        <th>开始时间</th>
+                                        <th>结束时间</th>
+                                        <th>耗时</th>
+                                        <th>当前状态</th>
+                                        <th>执行结果</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -77,6 +80,9 @@
                                         <td>{{ item.attempts }}</td>
                                         <td>{{ item.available_at | DateFormat }}</td>
                                         <td>{{ item.reserved_at | DateFormat }}</td>
+                                        <td>{{ item.start_time | DateFormat }}</td>
+                                        <td>{{ item.end_time | DateFormat }}</td>
+                                        <td>{{ item.end_time - item.start_time }} s</td>
                                         <td>
                                             <template v-if="item.status == 0">
                                                 <span class="label label-warning">排队中</span>
@@ -87,8 +93,16 @@
                                             <template v-if="item.status == 2">
                                                 <span class="label label-success">已完成</span>
                                             </template>
-                                            <template v-if="item.status == 3">
-                                                <span class="label label-danger">异常</span>
+                                        </td>
+                                        <td>
+                                            <template v-if="item.result == 0">
+                                                <span class="label label-warning">未执行</span>
+                                            </template>
+                                            <template v-if="item.result == 1">
+                                                <span class="label label-success">成功</span>
+                                            </template>
+                                            <template v-if="item.result == 2">
+                                                <span class="label label-danger">失败</span>
                                             </template>
                                         </td>
                                     </tr>
@@ -159,7 +173,7 @@
                      */
                     DateFormat: function(val){
                         if(val == 0){
-                            return '--';
+                            return '';
                         }
                         var date = new Date(parseInt(val)*1000);
                         return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
