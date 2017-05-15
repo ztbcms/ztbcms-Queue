@@ -27,7 +27,7 @@ class ExcetionJob extends Job {
      */
     function handle() {
         Log::write(__CLASS__ . ':' . 'handle');
-        echo 'work with a excetion..\r';
+        echo 'ID: ' . $this->getId() . ' work with a excetion..\r\n';
         throw new \Exception('test excetion...');
     }
 

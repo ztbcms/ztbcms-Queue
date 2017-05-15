@@ -7,6 +7,7 @@
 namespace Queue\Controller;
 
 use Queue\Jobs\ExcetionJob;
+use Queue\Jobs\HugeJob;
 use Queue\Jobs\UpdateJob;
 use Queue\Libs\Queue;
 
@@ -57,4 +58,13 @@ class TestController extends QueueController {
 
     }
 
+    //模拟耗时任务
+    function pushHugeJob() {
+        $job = new HugeJob();
+
+        $queue = Queue::getInstance();
+        $result = $queue->push('low', $job);
+        var_dump($result);
+
+    }
 }
