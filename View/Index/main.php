@@ -8,7 +8,7 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Job列表</h3>
+                            <h3 class="box-title">任务列表</h3>
                             <section style="margin-top: 8px;">
                                 <div class="row">
 

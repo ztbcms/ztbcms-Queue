@@ -20,8 +20,8 @@ return array(
                 "route" => "Queue/Index/main",
                 "type" => 1,
                 "status" => 1,
-                "name" => "队列总览",
-                "remark" => "队列总览页面"
+                "name" => "任务列表",
+                "remark" => "任务列表"
             ),
             array(
                 "route" => "Queue/Job/lists",
