@@ -70,6 +70,7 @@
                                         <th>耗时</th>
                                         <th>当前状态</th>
                                         <th>执行结果</th>
+                                        <th style="text-align: center">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -107,6 +108,9 @@
                                                 <span class="label label-danger">失败</span>
                                             </template>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-primary" @click="repush(item.id)">重新入列</button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -135,6 +139,7 @@
             <!-- /.row -->
         </section>
         <!-- /.content -->
+
     </div>
 
     <script>
@@ -299,6 +304,19 @@
                             hash: a.hash
                         }
                     },
+                    //任务重新入列页面
+                    repush: function(job_id){
+                        var url = "{:U('Queue/Index/repush')}&job_id=" + job_id;
+                        layer.open({
+                            type: 2,
+                            title: '提示',
+                            shadeClose: true,
+                            shade: false,
+                            maxmin: false, //开启最大化最小化按钮
+                            area: ['600px', '400px'],
+                            content: url
+                        });
+                    }
                 },
                 computed: {
                     //总页码

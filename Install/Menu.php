@@ -29,6 +29,18 @@ return array(
                 "status" => 1,
                 "name" => "获取工作任务列表接口",
             ),
+            array(
+                "route" => "Queue/Index/repush",
+                "type" => 0,
+                "status" => 1,
+                "name" => "任务重新入列的设置页面",
+            ),
+            array(
+                "route" => "Queue/Job/repush",
+                "type" => 0,
+                "status" => 1,
+                "name" => "任务重新入列操作",
+            ),
         ),
     ),
 );

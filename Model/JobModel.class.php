@@ -28,6 +28,10 @@ class JobModel extends Model {
      */
     const STATUS_FINISH = 2;
     /**
+     * 运行结果：无
+     */
+    const RESULT_NO = 0;
+    /**
      * 运行结果：正常
      */
     const RESULT_SUCCESS = 1;

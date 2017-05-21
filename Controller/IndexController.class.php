@@ -17,4 +17,14 @@ class IndexController extends AdminBase {
         $this->display();
     }
 
+    /**
+     * 任务重新入列的设置页面
+     */
+    function repush() {
+        $job_id = I('get.job_id');
+        $job = D('Queue/Job')->where(['id' => $job_id])->find();
+        $this->assign('job', $job);
+        $this->display();
+    }
+
 }

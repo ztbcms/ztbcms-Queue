@@ -8,6 +8,8 @@ namespace Queue\Controller;
 
 use Common\Controller\AdminBase;
 use Libs\Service\ContentService;
+use Queue\Libs\Utils;
+use Queue\Model\JobModel;
 
 /**
  * Job相关接口
@@ -23,8 +25,41 @@ class JobController extends AdminBase {
         $value = I('get._value');
         $page = I('get.page');
         $limit = I('get.limit');
-        $data = ContentService::lists('QueueJob', $filter, $operator, $value,'id DESC', $page, $limit)['data'];
+        $data = ContentService::lists('QueueJob', $filter, $operator, $value, 'id DESC', $page, $limit)['data'];
         $this->ajaxReturn(self::createReturn(true, $data));
+    }
+
+    /**
+     * 任务重新入列操作
+     */
+    function repush() {
+        $job_id = I('post.job_id');
+        $delay = I('post.delay', 0);
+        $now = Utils::now();
+
+        $db = D('Queue/Job');
+        $job = $db->where(['id' => $job_id])->find();
+        if(!$job){
+            $this->ajaxReturn(self::createReturn(false, null, '找不到该任务'));
+            return;
+        }
+        unset($job['id']);
+        $job['create_time'] = $now;
+        $job['available_at'] = $now + $delay * 1000;
+        $job['reserved_at'] = 0;
+        $job['attempts'] = 0;
+
+        $job['start_time'] = 0;
+        $job['end_time'] = 0;
+        $job['status'] = JobModel::STATUS_WAITTING;
+        $job['result'] = JobModel::RESULT_NO;
+
+        $res = $db->add($job);
+        if($res){
+            $this->ajaxReturn(self::createReturn(true, $res, '操作成功'));
+        }else{
+            $this->ajaxReturn(self::createReturn(false, null, $db->getDbError()));
+        }
     }
 
 }
