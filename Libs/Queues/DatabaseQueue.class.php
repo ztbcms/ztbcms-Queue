@@ -142,7 +142,7 @@ class DatabaseQueue extends Queue {
      */
     function startJob(Job $job) {
         $this->db->startTrans();
-        $this->db->where(['id' => $job->getId()])->save(['start_time' => Utils::now(), JobModel::STATUS_WORKING]);
+        $this->db->where(['id' => $job->getId()])->save(['start_time' => Utils::now(), 'status' => JobModel::STATUS_WORKING]);
         $this->db->commit();
     }
 
