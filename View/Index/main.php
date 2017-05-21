@@ -62,6 +62,7 @@
                                         <th>队列</th>
                                         <th>数据</th>
                                         <th>重试次数</th>
+                                        <th>创建时间</th>
                                         <th>可用时间</th>
                                         <th>出队时间</th>
                                         <th>开始时间</th>
@@ -78,11 +79,12 @@
                                         <td>{{ item.queue }}</td>
                                         <td>{{ item.payload }}</td>
                                         <td>{{ item.attempts }}</td>
+                                        <td>{{ item.create_time | DateFormat }}</td>
                                         <td>{{ item.available_at | DateFormat }}</td>
                                         <td>{{ item.reserved_at | DateFormat }}</td>
                                         <td>{{ item.start_time | DateFormat }}</td>
                                         <td>{{ item.end_time | DateFormat }}</td>
-                                        <td>{{ item.end_time - item.start_time }} ms</td>
+                                        <td>{{ item.end_time - item.start_time | HandleNumber }} ms</td>
                                         <td>
                                             <template v-if="item.status == 0">
                                                 <span class="label label-warning">排队中</span>
@@ -166,17 +168,31 @@
                 },
                 filters: {
                     /**
-                     *
+                     * 时间格式化
                      * @param val
                      * @returns {string}
                      * @constructor
                      */
                     DateFormat: function(val){
-                        if(val == 0){
+                        val = parseInt(val);
+                        if(val === 0){
                             return '';
                         }
                         var date = new Date(parseInt(val));
                         return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()+'.'+date.getMilliseconds();
+                    },
+                    /**
+                     * 返回一个大于等于零的数字
+                     *
+                     * @return {number}
+                     */
+                    HandleNumber: function(val){
+                        val = parseInt(val);
+                        if(val < 0 ){
+                            return 0;
+                        }
+                        return val;
+
                     }
                 },
                 methods: {

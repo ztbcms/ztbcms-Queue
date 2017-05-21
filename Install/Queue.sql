@@ -10,5 +10,6 @@ CREATE TABLE `cms_queue_job` (
   `start_time` bigint(13) unsigned NOT NULL COMMENT '任务执行开始时间',
   `end_time` bigint(13) unsigned NOT NULL COMMENT '任务执行结束时间',
   `result` tinyint(2) NOT NULL DEFAULT '0' COMMENT '执行结果:0无,1正常 2异常',
+  `create_time` bigint(13) unsigned NOT NULL COMMENT '任务创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='队列任务';

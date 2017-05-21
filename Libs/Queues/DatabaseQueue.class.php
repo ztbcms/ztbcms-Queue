@@ -36,13 +36,15 @@ class DatabaseQueue extends Queue {
      * @return mixed
      */
     function push($queue = '', Job $job, $delay = 0) {
+        $now = Utils::now();
         $job_data = [
             'name' => get_class($job),
             'queue' => $queue,
             'payload' => json_encode(static::createPlayload($job)),
             'attempts' => 0,
-            'available_at' => Utils::now() + $delay * 1000,
+            'available_at' => $now + $delay * 1000,
             'reserved_at' => 0,
+            'create_time' => $now
         ];
 
         return $this->db->add($job_data);
