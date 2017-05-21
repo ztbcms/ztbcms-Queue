@@ -8,6 +8,7 @@ namespace Queue\Libs\Queues;
 
 use Queue\Libs\Job;
 use Queue\Libs\Queue;
+use Queue\Libs\Utils;
 use Queue\Model\JobModel;
 use Think\Log;
 
@@ -31,7 +32,7 @@ class DatabaseQueue extends Queue {
      *
      * @param string $queue
      * @param Job    $job
-     * @param int    $delay
+     * @param int    $delay 延迟时间，单位：秒
      * @return mixed
      */
     function push($queue = '', Job $job, $delay = 0) {
@@ -40,7 +41,7 @@ class DatabaseQueue extends Queue {
             'queue' => $queue,
             'payload' => json_encode(static::createPlayload($job)),
             'attempts' => 0,
-            'available_at' => time() + $delay,
+            'available_at' => Utils::now() + $delay * 1000,
             'reserved_at' => 0,
         ];
 
@@ -55,10 +56,11 @@ class DatabaseQueue extends Queue {
      */
     function pop($queue = '') {
         $this->db->startTrans();
+        $now = Utils::now();
         $job_record = $this->db->where([
             'status' => JobModel::STATUS_WAITTING,
             'queue' => $queue,
-            'available_at' => ['ELT', time()],
+            'available_at' => ['ELT', $now],
             'reserved_at' => 0, //未取出的
         ])->order('available_at ASC, id ASC')->lock(true)->find();
         $this->db->commit();
@@ -71,7 +73,7 @@ class DatabaseQueue extends Queue {
             $job_record['attempts'], $job_record['reserved_at'], $job_record['available_at'], $job_record['status']);
 
         //标志
-        $this->updateJob($job->getId(), ['reserved_at' => time()]);
+        $this->updateJob($job->getId(), ['reserved_at' => $now]);
 
         $this->db->commit();
 
@@ -138,7 +140,7 @@ class DatabaseQueue extends Queue {
      */
     function startJob(Job $job) {
         $this->db->startTrans();
-        $this->db->where(['id' => $job->getId()])->save(['start_time' => time(), JobModel::STATUS_WORKING]);
+        $this->db->where(['id' => $job->getId()])->save(['start_time' => Utils::now(), JobModel::STATUS_WORKING]);
         $this->db->commit();
     }
 
@@ -150,7 +152,7 @@ class DatabaseQueue extends Queue {
      */
     function endJob(Job $job) {
         $this->db->startTrans();
-        $this->db->where(['id' => $job->getId()])->save(['end_time' => time(), 'status' => JobModel::STATUS_FINISH]);
+        $this->db->where(['id' => $job->getId()])->save(['end_time' => Utils::now(), 'status' => JobModel::STATUS_FINISH]);
         $this->db->commit();
     }
 

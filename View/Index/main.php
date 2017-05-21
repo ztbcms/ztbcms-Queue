@@ -82,7 +82,7 @@
                                         <td>{{ item.reserved_at | DateFormat }}</td>
                                         <td>{{ item.start_time | DateFormat }}</td>
                                         <td>{{ item.end_time | DateFormat }}</td>
-                                        <td>{{ item.end_time - item.start_time }} s</td>
+                                        <td>{{ item.end_time - item.start_time }} ms</td>
                                         <td>
                                             <template v-if="item.status == 0">
                                                 <span class="label label-warning">排队中</span>
@@ -175,8 +175,8 @@
                         if(val == 0){
                             return '';
                         }
-                        var date = new Date(parseInt(val)*1000);
-                        return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+                        var date = new Date(parseInt(val));
+                        return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()+'.'+date.getMilliseconds();
                     }
                 },
                 methods: {
