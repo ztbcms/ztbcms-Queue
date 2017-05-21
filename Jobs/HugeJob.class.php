@@ -16,7 +16,7 @@ class HugeJob extends Job {
      * @return mixed
      */
     function handle() {
-        sleep(2);
+        sleep(5);
         echo 'ID: ' . $this->getId() . ' work with a Huge Job..\\r\\n';
     }
 }
