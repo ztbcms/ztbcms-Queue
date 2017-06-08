@@ -35,7 +35,7 @@ class DatabaseQueue extends Queue {
      * @param int    $delay 延迟时间，单位：秒
      * @return mixed
      */
-    function push($queue = '', Job $job, $delay = 0) {
+    function push($queue, Job $job, $delay = 0) {
         $now = Utils::now();
         $job_data = [
             'name' => get_class($job),
