@@ -5,7 +5,7 @@ return array(
         //父菜单ID，NULL或者不写系统默认，0为顶级菜单
         "parentid" => 0,
         //地址，[模块/]控制器/方法
-        "route" => "Wechat/Wechat/index",
+        "route" => "Queue/Index/main",
         //类型，1：权限认证+菜单，0：只作为菜单
         "type" => 0,
         //状态，1是显示，0不显示（需要参数的，建议不显示，例如编辑,删除等操作）
@@ -25,20 +25,20 @@ return array(
             ),
             array(
                 "route" => "Queue/Job/lists",
-                "type" => 0,
-                "status" => 1,
+                "type" => 1,
+                "status" => 0,
                 "name" => "获取工作任务列表接口",
             ),
             array(
                 "route" => "Queue/Index/repush",
                 "type" => 0,
-                "status" => 1,
+                "status" => 0,
                 "name" => "任务重新入列的设置页面",
             ),
             array(
                 "route" => "Queue/Job/repush",
-                "type" => 0,
-                "status" => 1,
+                "type" => 1,
+                "status" => 0,
                 "name" => "任务重新入列操作",
             ),
         ),
