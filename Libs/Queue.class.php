@@ -40,7 +40,7 @@ abstract class Queue {
      * @param int    $delay 延迟时长，单位：秒
      * @return Job
      */
-    abstract function push($queue = '', Job $job, $delay = 0);
+    abstract function push($queue, Job $job, $delay = 0);
 
     /**
      * 取出
