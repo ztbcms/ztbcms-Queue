@@ -1,7 +1,7 @@
 <extend name="../../Admin/View/Common/base_layout"/>
 
 <block name="content">
-    <div style="background-color: #ecf0f5;height: 100%" id="app">
+    <div style="background-color: #ecf0f5;height: 100%" id="app" v-cloak>
         <!-- Main content -->
         <section class="content">
             <div class="row">
