@@ -105,7 +105,7 @@ abstract class Queue {
      * @param JobModel $job
      * @return mixed
      */
-    abstract function faildJob(JobModel $job);
+    abstract function faildJob(JobModel $job, \Exception $exception);
 
     /**
      * 任务成功执行完成时

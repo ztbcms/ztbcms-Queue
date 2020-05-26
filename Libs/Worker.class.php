@@ -7,6 +7,7 @@
 namespace Queue\Libs;
 
 use Queue\Model\JobModel;
+use Think\Exception;
 use Think\Log;
 
 /**
@@ -106,9 +107,8 @@ class Worker {
             $this->onJobSuccess($jobObject);
         } catch (\Exception $e) {
             $work_result = false;
-            $this->onJobFaild($jobObject);
+            $this->onJobFaild($jobObject, $e);
 
-            $this->handleException($jobObject);
             $excuteJob->onError();
         } finally {
             $this->onJobFinish($jobObject, $work_result);
@@ -123,15 +123,6 @@ class Worker {
      */
     private function sleep($sleep) {
         sleep($sleep);
-    }
-
-    /**
-     * 处理异常
-     *
-     * @param Job $job
-     */
-    protected function handleException(JobModel $job) {
-        $this->onJobFaild($job);
     }
 
     /**
@@ -180,10 +171,11 @@ class Worker {
     /**
      * 任务完成后回调
      *
-     * @param Job $job
+     * @param  JobModel  $job
+     * @param  \Exception  $exception
      */
-    protected function onJobFaild(JobModel $job) {
-        $this->manager->faildJob($job);
+    protected function onJobFaild(JobModel $job, \Exception $exception) {
+        $this->manager->faildJob($job, $exception);
     }
 
     /**
