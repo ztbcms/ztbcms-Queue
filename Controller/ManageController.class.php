@@ -76,4 +76,19 @@ class ManageController extends AdminBase {
         }
     }
 
+    /**
+     * 删除任务
+     */
+    function doDeleteJob(){
+        $job_id = I('post.job_id');
+        $db = D('Queue/Job');
+        $job = $db->where(['id' => $job_id])->find();
+        if(!$job){
+            $this->ajaxReturn(self::createReturn(false, null, '找不到该任务'));
+            return;
+        }
+        $db->where(['id' => $job_id])->delete();
+        $this->ajaxReturn(self::createReturn(true, null, '操作成功'));
+    }
+
 }

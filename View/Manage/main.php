@@ -109,7 +109,8 @@
                                             </template>
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary" @click="repush(item.id)">重新入列</button>
+                                            <button class="btn btn-primary btn-sm" @click="repush(item.id)" style="margin: 4px;">重新入列</button>
+                                            <button class="btn btn-danger btn-sm" @click="deleteJob(item.id)" style="margin: 4px;">删除</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -306,7 +307,7 @@
                     },
                     //任务重新入列页面
                     repush: function(job_id){
-                        var url = "{:U('Queue/Index/repush')}&job_id=" + job_id;
+                        var url = "{:U('Queue/Manage/repush')}&job_id=" + job_id;
                         layer.open({
                             type: 2,
                             title: '提示',
@@ -316,7 +317,31 @@
                             area: ['600px', '400px'],
                             content: url
                         });
-                    }
+                    },
+                    deleteJob: function (job_id){
+                        var that = this
+                        layer.confirm('确认删除?（注：请勿删除执行中的任务）', function(index){
+                            that.doDeleteJob(job_id)
+
+                            layer.close(index);
+                        });
+                    },
+                    //请求获取数据列表
+                    doDeleteJob: function (job_id) {
+                        var that = this;
+                        var data = {
+                            job_id: that.job_id,
+                        };
+                        $.ajax({
+                            url: "{:U('Queue/Manage/doDeleteJob')}",
+                            type: 'post',
+                            dataType: 'json',
+                            data: data,
+                            success: function (res) {
+                                layer.msg(res.msg);
+                            }
+                        });
+                    },
                 },
                 computed: {
                     //总页码

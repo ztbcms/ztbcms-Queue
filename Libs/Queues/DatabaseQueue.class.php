@@ -189,7 +189,6 @@ class DatabaseQueue extends Queue {
      * @return mixed
      */
     function faildJob(JobModel $job) {
-        Log::write('faildJob!!');
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_ERROR]);
         $this->db->commit();
@@ -202,7 +201,6 @@ class DatabaseQueue extends Queue {
      * @return mixed
      */
     function successJob(JobModel $job) {
-        Log::write('successJob!!');
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_SUCCESS]);
         $this->db->commit();
