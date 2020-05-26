@@ -56,7 +56,7 @@ abstract class Queue {
      * @param Job $job
      * @return array
      */
-    function createPlayload($job) {
+    function createPayload($job) {
         $properties = get_class_vars(get_class($job));
         $ret = array();
         foreach ($properties as $key => $val) {
@@ -113,10 +113,12 @@ abstract class Queue {
      *实例化Job类
      *
      * @param $name
-     * @return Job
+     *
+     * @return object|Job
      */
     protected function instanceJob($name) {
-        return new $name;
+        $r1 = new \ReflectionClass($name);
+        return $r1->newInstanceWithoutConstructor();
     }
 
     /**

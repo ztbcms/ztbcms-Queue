@@ -6,12 +6,13 @@
 
 namespace Queue\Controller;
 
+use Common\Controller\AdminBase;
 use Queue\Jobs\ExcetionJob;
 use Queue\Jobs\HugeJob;
 use Queue\Jobs\UpdateJob;
 use Queue\Libs\Queue;
 
-class TestController extends QueueController {
+class TestController extends AdminBase {
 
     function push() {
         $job = new UpdateJob(time(), 'ztbcms');

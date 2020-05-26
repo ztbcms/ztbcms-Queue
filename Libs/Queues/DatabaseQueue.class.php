@@ -40,7 +40,7 @@ class DatabaseQueue extends Queue {
         $job_data = [
             'name' => get_class($job),
             'queue' => $queue,
-            'payload' => json_encode(static::createPlayload($job)),
+            'payload' => json_encode(self::createPayload($job)),
             'attempts' => 0,
             'available_at' => $now + $delay * 1000,
             'reserved_at' => 0,
