@@ -17,6 +17,6 @@ class HugeJob extends Job {
      */
     function handle() {
         sleep(5);
-        echo 'ID: ' . $this->getId() . ' work with a Huge Job..\\r\\n';
+        echo 'HugeJob work with a Huge Job..\\r\\n';
     }
 }

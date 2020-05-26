@@ -30,17 +30,21 @@ class DatabaseQueue extends Queue {
     /**
      * 添加
      *
-     * @param string $queue
-     * @param Job    $job
-     * @param int    $delay 延迟时间，单位：秒
+     * @param  string  $queue
+     * @param  Job  $job
+     * @param  int  $delay  延迟时间，单位：秒
      * @return mixed
+     * @throws \ReflectionException
      */
     function push($queue, Job $job, $delay = 0) {
         $now = Utils::now();
         $job_data = [
             'name' => get_class($job),
             'queue' => $queue,
-            'payload' => json_encode(self::createPayload($job)),
+            'payload' => json_encode([
+                'name' => get_class($job),
+                'data' => $this->createPayload($job),
+            ]),
             'attempts' => 0,
             'available_at' => $now + $delay * 1000,
             'reserved_at' => 0,
@@ -51,10 +55,21 @@ class DatabaseQueue extends Queue {
     }
 
     /**
+     * 获取该任务的属性数据
+     *
+     * @param  Job  $job
+     * @return array
+     * @throws \ReflectionException
+     */
+    function createPayload(Job $job) {
+        return  $job->toSerialize();
+    }
+
+    /**
      * 取出
      *
      * @param string $queue
-     * @return Job|null
+     * @return JobModel|null
      */
     function pop($queue = '') {
         $this->db->startTrans();
@@ -71,11 +86,20 @@ class DatabaseQueue extends Queue {
             return null;
         }
 
-        $job = $this->asJob($job_record['id'], $job_record['name'], $job_record['queue'], $job_record['payload'],
-            $job_record['attempts'], $job_record['reserved_at'], $job_record['available_at'], $job_record['status']);
+        $job = new JobModel();
+        $job->setId($job_record['id']);
+        $job->setAttempts($job_record['attempts']);
+        $job->setAvailableAt($job_record['available_at']);
+        $job->setEndTime($job_record['end_time']);
+        $job->setPayload($job_record['payload']);
+        $job->setQueue($job_record['queue']);
+        $job->setReservedAt($job_record['reserved_at']);
+        $job->setResult($job_record['result']);
+        $job->setStartTime($job_record['start_time']);
+        $job->setStatus($job_record['status']);
 
         //标志
-        $this->updateJob($job->getId(), ['reserved_at' => $now]);
+        $this->updateJob($job_record['id'], ['reserved_at' => $now]);
 
         $this->db->commit();
 
@@ -86,10 +110,10 @@ class DatabaseQueue extends Queue {
     /**
      * 标识任务状态
      *
-     * @param Job $job
+     * @param JobModel $job
      * @param int $status
      */
-    public function markAs($job, $status) {
+    public function markAs(JobModel $job, $status) {
         $this->updateJob($job->getId(), ['status' => $status]);
     }
 
@@ -123,7 +147,7 @@ class DatabaseQueue extends Queue {
      * @param Job    $job
      * @return mixed
      */
-    public function release(Job $job) {
+    public function release(JobModel $job) {
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->lock(true)->save([
             'reserved_at' => 0, //清空取出时间
@@ -140,7 +164,7 @@ class DatabaseQueue extends Queue {
      * @param Job $job
      * @return mixed
      */
-    function startJob(Job $job) {
+    function startJob(JobModel $job) {
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['start_time' => Utils::now(), 'status' => JobModel::STATUS_WORKING]);
         $this->db->commit();
@@ -152,7 +176,7 @@ class DatabaseQueue extends Queue {
      * @param Job $job
      * @return mixed
      */
-    function endJob(Job $job) {
+    function endJob(JobModel $job) {
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['end_time' => Utils::now(), 'status' => JobModel::STATUS_FINISH]);
         $this->db->commit();
@@ -164,7 +188,7 @@ class DatabaseQueue extends Queue {
      * @param Job $job
      * @return mixed
      */
-    function faildJob(Job $job) {
+    function faildJob(JobModel $job) {
         Log::write('faildJob!!');
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_ERROR]);
@@ -177,7 +201,7 @@ class DatabaseQueue extends Queue {
      * @param Job $job
      * @return mixed
      */
-    function successJob(Job $job) {
+    function successJob(JobModel $job) {
         Log::write('successJob!!');
         $this->db->startTrans();
         $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_SUCCESS]);

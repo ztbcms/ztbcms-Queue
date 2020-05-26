@@ -33,7 +33,7 @@ class UpdateJob extends Job {
 
     public function handle() {
         Log::write(__CLASS__ . ':' . 'handle');
-        echo 'ID ' . $this->getId() . ' update user: ' . $this->userid . ' username=>' . $this->username. ' \\r\\n';
+        echo ' update user: ' . $this->userid . ' username=>' . $this->username. ' \\r\\n';
     }
 
     function afterHandle() {

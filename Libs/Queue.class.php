@@ -7,6 +7,7 @@
 namespace Queue\Libs;
 
 use Queue\Libs\Queues\DatabaseQueue;
+use Queue\Model\JobModel;
 
 abstract class Queue {
 
@@ -46,66 +47,14 @@ abstract class Queue {
      * 取出
      *
      * @param string $queue
-     * @return Job|null
+     * @return JobModel|null
      */
     abstract function pop($queue = '');
 
-    /**
-     * 获取该任务的属性数据
-     *
-     * @param Job $job
-     * @return array
-     */
-    function createPayload($job) {
-        $properties = get_class_vars(get_class($job));
-        $ret = array();
-        foreach ($properties as $key => $val) {
-            $ret[$key] = $job->$key;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * @param string $job_id
-     * @param string $name
-     * @param string $queue
-     * @param string $playload
-     * @param int    $attempts
-     * @param int    $reserved_at
-     * @param int    $available_at
-     * @param string $status
-     * @internal param $data
-     * @return Job
-     */
-    function asJob(
-        $job_id,
-        $name,
-        $queue = '',
-        $playload = '',
-        $attempts = 0,
-        $reserved_at = 0,
-        $available_at = 0,
-        $status
-    ) {
-
-        $playload = json_decode($playload, true);
-
-        $job = $this->instanceJob($name);
-        $job->setAttempts($attempts);
-        $job->setAvailableAt($available_at);
-        $job->setId($job_id);
-        $job->setPlayload($playload);
-        $job->setQueue($queue);
-        $job->setReservedAt($reserved_at);
-        $job->setStatus($status);
-
-        //properties
-        $properties = get_class_vars(get_class($job));
-        foreach ($properties as $key => $val) {
-            $job->$key = $playload[$key];
-        }
-
+    function asJob($payload)
+    {
+        $payload = json_decode($payload, true);
+        $job = $this->instanceJob($payload['name'], $payload['data']);
         return $job;
     }
 
@@ -114,56 +63,61 @@ abstract class Queue {
      *
      * @param $name
      *
+     * @param  array  $data
+     *
      * @return object|Job
+     * @throws \ReflectionException
      */
-    protected function instanceJob($name) {
-        $r1 = new \ReflectionClass($name);
-        return $r1->newInstanceWithoutConstructor();
+    protected function instanceJob($name,array $data = []) {
+        $reflectionClass = new \ReflectionClass($name);
+        $job = $reflectionClass->newInstanceWithoutConstructor();
+        $job->toUnserialize($data);
+        return $job;
     }
 
     /**
      * 标识任务状态
      *
-     * @param Job $job
+     * @param JobModel $job
      * @param int $status
      */
-    abstract function markAs($job, $status);
+    abstract function markAs(JobModel $job, $status);
 
     /**
      * 任务工作开始时
      *
-     * @param Job $job
+     * @param JobModel $job
      * @return mixed
      */
-    abstract function startJob(Job $job);
+    abstract function startJob(JobModel $job);
 
     /**
      * 任务工作结束时
      *
-     * @param Job $job
+     * @param JobModel $job
      * @return mixed
      */
-    abstract function endJob(Job $job);
+    abstract function endJob(JobModel $job);
 
     /**
      * 任务工作异常时
      *
-     * @param Job $job
+     * @param JobModel $job
      * @return mixed
      */
-    abstract function faildJob(Job $job);
+    abstract function faildJob(JobModel $job);
 
     /**
      * 任务成功执行完成时
      *
-     * @param Job $job
+     * @param JobModel $job
      * @return mixed
      */
-    abstract function successJob(Job $job);
+    abstract function successJob(JobModel $job);
 
     /**
      * 删除任务
-     *
+     * TODO 改为一个Job对象
      * @param $id
      * @return mixed
      */
@@ -172,9 +126,9 @@ abstract class Queue {
     /**
      * 把Job重新
      *
-     * @param Job    $job
+     * @param JobModel    $job
      * @return mixed
      */
-    abstract function release(Job $job);
+    abstract function release(JobModel $job);
 
 }

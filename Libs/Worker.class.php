@@ -6,6 +6,7 @@
 
 namespace Queue\Libs;
 
+use Queue\Model\JobModel;
 use Think\Log;
 
 /**
@@ -61,7 +62,7 @@ class Worker {
      * 获得下一个Job
      *
      * @param string $queue
-     * @return Job|null
+     * @return JobModel|null
      */
     protected function getNextJob($queue = '') {
         foreach (explode(',', $queue) as $q) {
@@ -91,26 +92,27 @@ class Worker {
     /**
      * 执行Job
      *
-     * @param Job $job
+     * @param JobModel $jobObject
      */
-    private function runJob(Job $job) {
+    private function runJob(JobModel $jobObject) {
         $work_result = true; // 任务执行结果，默认是成功
+        $excuteJob = $jobObject->getExcuteJob();
         try {
-            $this->onJobStart($job);
+            $this->onJobStart($jobObject);
 
-            $job->beforeHandle();
-            $job->handle();
+            $excuteJob->beforeHandle();
+            $excuteJob->handle();
 
-            $this->onJobSuccess($job);
+            $this->onJobSuccess($jobObject);
         } catch (\Exception $e) {
             $work_result = false;
-            $this->onJobFaild($job);
+            $this->onJobFaild($jobObject);
 
-            $this->handleException($job);
-            $job->onError();
+            $this->handleException($jobObject);
+            $excuteJob->onError();
         } finally {
-            $this->onJobFinish($job, $work_result);
-            $job->afterHandle();
+            $this->onJobFinish($jobObject, $work_result);
+            $excuteJob->afterHandle();
         }
     }
 
@@ -128,7 +130,7 @@ class Worker {
      *
      * @param Job $job
      */
-    protected function handleException(Job $job) {
+    protected function handleException(JobModel $job) {
         $this->onJobFaild($job);
     }
 
@@ -145,7 +147,7 @@ class Worker {
      *
      * @param Job $job
      */
-    protected function onJobStart(Job $job) {
+    protected function onJobStart(JobModel $job) {
         $this->manager->startJob($job);
     }
 
@@ -155,7 +157,7 @@ class Worker {
      * @param Job  $job
      * @param bool $work_result
      */
-    protected function onJobFinish(Job $job, $work_result = true) {
+    protected function onJobFinish(JobModel $job, $work_result = true) {
         $this->manager->endJob($job);
 
         //失败时考虑重试
@@ -171,7 +173,7 @@ class Worker {
      *
      * @param Job $job
      */
-    protected function onJobSuccess(Job $job) {
+    protected function onJobSuccess(JobModel $job) {
         $this->manager->successJob($job);
     }
 
@@ -180,7 +182,7 @@ class Worker {
      *
      * @param Job $job
      */
-    protected function onJobFaild(Job $job) {
+    protected function onJobFaild(JobModel $job) {
         $this->manager->faildJob($job);
     }
 
@@ -189,7 +191,7 @@ class Worker {
      *
      * @param Job $job
      */
-    protected function onJobRelease(Job $job) {
+    protected function onJobRelease(JobModel $job) {
         $this->manager->release($job);
     }
 

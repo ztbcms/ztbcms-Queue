@@ -12,9 +12,11 @@ use Queue\Jobs\HugeJob;
 use Queue\Jobs\UpdateJob;
 use Queue\Libs\Queue;
 
-class TestController extends AdminBase {
+class TestController extends AdminBase
+{
 
-    function push() {
+    function push()
+    {
         $job = new UpdateJob(time(), 'ztbcms');
 
         $queue = Queue::getInstance();
@@ -23,7 +25,8 @@ class TestController extends AdminBase {
     }
 
     //延时
-    function pushWithDelete() {
+    function pushWithDelay()
+    {
         $job = new UpdateJob(time(), 'delete Job!');
 
         $queue = Queue::getInstance();
@@ -31,18 +34,31 @@ class TestController extends AdminBase {
         var_dump($result);
     }
 
-    function pop() {
+    function pop()
+    {
         $queue = Queue::getInstance();
         $result = $queue->pop('high');
         var_dump($result);
     }
 
-    function deleteJob() {
+    function popAndRunJob()
+    {
+        $queue = Queue::getInstance();
+        $job = $queue->pop('high');
+        if ($job) {
+            var_dump($job);
+            $job->getExcuteJob()->handle();
+        }
+    }
+
+    function deleteJob()
+    {
         $queue = Queue::getInstance();
         $queue->deleteJob(78);
     }
 
-    function release() {
+    function release()
+    {
         $queue = Queue::getInstance();
         $job = new UpdateJob(6666, 'test..');
         $job->setId(79);
@@ -50,7 +66,8 @@ class TestController extends AdminBase {
     }
 
     //模拟异常任务
-    function pushExcetionJob() {
+    function pushExcetionJob()
+    {
         $job = new ExcetionJob();
 
         $queue = Queue::getInstance();
@@ -60,7 +77,8 @@ class TestController extends AdminBase {
     }
 
     //模拟耗时任务
-    function pushHugeJob() {
+    function pushHugeJob()
+    {
         $job = new HugeJob();
 
         $queue = Queue::getInstance();
