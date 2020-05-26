@@ -96,7 +96,7 @@
                             delay: that.delay
                         };
                         $.ajax({
-                            url: "{:U('Queue/Job/repush')}",
+                            url: "{:U('Queue/Manage/doRepush')}",
                             type: 'post',
                             dataType: 'json',
                             data: data,

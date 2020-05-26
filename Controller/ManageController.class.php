@@ -11,15 +11,19 @@ use Libs\Service\ContentService;
 use Queue\Libs\Utils;
 use Queue\Model\JobModel;
 
-/**
- * Job相关接口
- */
-class JobController extends AdminBase {
+class ManageController extends AdminBase {
+
+    /**
+     * 队列总览页面
+     */
+    function main() {
+        $this->display();
+    }
 
     /**
      * 工作任务列表
      */
-    function lists() {
+    function getJobList() {
         $filter = I('get._filter');
         $operator = I('get._operator');
         $value = I('get._value');
@@ -30,9 +34,19 @@ class JobController extends AdminBase {
     }
 
     /**
-     * 任务重新入列操作
+     * 任务重新入列的设置页面
      */
     function repush() {
+        $job_id = I('get.job_id');
+        $job = D('Queue/Job')->where(['id' => $job_id])->find();
+        $this->assign('job', $job);
+        $this->display();
+    }
+
+    /**
+     * 任务重新入列操作
+     */
+    function doRepush() {
         $job_id = I('post.job_id');
         $delay = I('post.delay', 0);
         $now = Utils::now();

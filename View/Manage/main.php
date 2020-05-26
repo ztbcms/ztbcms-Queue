@@ -352,7 +352,7 @@
                     },
                     //搜索的URL
                     requestURL: function () {
-                        return 'index.php?g=Queue&m=Job&a=lists&' + this.queryString;
+                        return 'index.php?g=Queue&m=Manage&a=getJobList&' + this.queryString;
                     }
 
                 }
