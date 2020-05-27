@@ -120,7 +120,7 @@
                 :visible.sync="dialogVisible"
                 width="40%">
             <span>
-                <pre style="width: 100%;overflow-x:auto">{{showMsg}}</pre>
+                <pre style="height: 245px; overflow-y:auto">{{showMsg}}</pre>
             </span>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -135,6 +135,10 @@
 
         .pagination-container {
             padding: 32px 16px;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 
