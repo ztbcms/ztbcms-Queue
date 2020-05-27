@@ -197,10 +197,11 @@ class DatabaseQueue extends Queue {
      *
      * @return mixed
      */
-    function faildJob(JobModel $job, \Exception $exception) {
+    function faildJob(JobModel $job, \Throwable $exception) {
         $this->db->startTrans();
         $m = $this->db->where(['id' => $job->getId()])->find();
         $this->db->where(['id' => $job->getId()])->save(['result' => JobModel::RESULT_ERROR]);
+        // 记录异常任务
         unset($m['id']);
         $m['exception'] = $exception->getMessage() . ' ' . $exception->getTraceAsString();
         D('Queue/FaildJob')->add($m);

@@ -105,7 +105,7 @@ class Worker {
             $excuteJob->handle();
 
             $this->onJobSuccess($jobObject);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $work_result = false;
             $this->onJobFaild($jobObject, $e);
 
@@ -173,9 +173,9 @@ class Worker {
      * 任务完成后回调
      *
      * @param  JobModel  $job
-     * @param  \Exception  $exception
+     * @param  \Throwable  $exception
      */
-    protected function onJobFaild(JobModel $job, \Exception $exception) {
+    protected function onJobFaild(JobModel $job, \Throwable $exception) {
         $this->manager->faildJob($job, $exception);
     }
 

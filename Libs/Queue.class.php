@@ -102,10 +102,12 @@ abstract class Queue {
     /**
      * 任务工作异常时
      *
-     * @param JobModel $job
+     * @param  JobModel  $job
+     * @param  \Throwable  $exception
+     *
      * @return mixed
      */
-    abstract function faildJob(JobModel $job, \Exception $exception);
+    abstract function faildJob(JobModel $job, \Throwable $exception);
 
     /**
      * 任务成功执行完成时
