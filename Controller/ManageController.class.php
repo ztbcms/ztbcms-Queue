@@ -21,6 +21,27 @@ class ManageController extends AdminBase {
     }
 
     /**
+     * 失败队列页面
+     */
+    function faildmain() {
+        $this->display();
+    }
+
+    /**
+     * 获取失败工作任务列表
+     */
+    function getFaildJobList(){
+        $filter = ['name'];
+        $operator = ['EQ'];
+        $value = [I('get.search_name')];
+        $page = I('get.page');
+        $limit = I('get.limit');
+        $data = ContentService::lists('QueueFaildJob', $filter, $operator, $value, 'id DESC', $page, $limit)['data'];
+        $this->ajaxReturn(self::createReturn(true, $data));
+    }
+
+
+    /**
      * 工作任务列表
      */
     function getJobList() {
@@ -82,6 +103,21 @@ class ManageController extends AdminBase {
     function doDeleteJob(){
         $job_id = I('post.job_id');
         $db = D('Queue/Job');
+        $job = $db->where(['id' => $job_id])->find();
+        if(!$job){
+            $this->ajaxReturn(self::createReturn(false, null, '找不到该任务'));
+            return;
+        }
+        $db->where(['id' => $job_id])->delete();
+        $this->ajaxReturn(self::createReturn(true, null, '操作成功'));
+    }
+
+    /**
+     * 删除失败任务
+     */
+    function doDeleteFaildJob(){
+        $job_id = I('post.job_id');
+        $db = D('Queue/FaildJob');
         $job = $db->where(['id' => $job_id])->find();
         if(!$job){
             $this->ajaxReturn(self::createReturn(false, null, '找不到该任务'));
