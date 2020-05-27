@@ -144,7 +144,8 @@ class DatabaseQueue extends Queue {
     /**
      * 把Job重新放到待运行队列
      *
-     * @param Job    $job
+     * @param  JobModel  $job
+     *
      * @return mixed
      */
     public function release(JobModel $job) {
@@ -152,7 +153,11 @@ class DatabaseQueue extends Queue {
         $this->db->where(['id' => $job->getId()])->lock(true)->save([
             'reserved_at' => 0, //清空取出时间
             'attempts' => $job->getAttempts() + 1,
-            'status' => JobModel::STATUS_WAITTING
+            'status' => JobModel::STATUS_WAITTING,
+            'result' => JobModel::RESULT_NO,
+            'start_time' => 0,
+            'end_time' => 0,
+
         ]);
         $this->db->commit();
 
@@ -161,7 +166,8 @@ class DatabaseQueue extends Queue {
     /**
      * 任务工作开始时
      *
-     * @param Job $job
+     * @param  JobModel  $job
+     *
      * @return mixed
      */
     function startJob(JobModel $job) {
@@ -173,7 +179,8 @@ class DatabaseQueue extends Queue {
     /**
      * 任务工作结束时
      *
-     * @param Job $job
+     * @param  JobModel  $job
+     *
      * @return mixed
      */
     function endJob(JobModel $job) {
@@ -185,7 +192,9 @@ class DatabaseQueue extends Queue {
     /**
      * 任务工作异常时
      *
-     * @param Job $job
+     * @param  JobModel  $job
+     * @param  \Exception  $exception
+     *
      * @return mixed
      */
     function faildJob(JobModel $job, \Exception $exception) {
@@ -201,7 +210,8 @@ class DatabaseQueue extends Queue {
     /**
      * 任务成功执行完成时
      *
-     * @param Job $job
+     * @param  JobModel  $job
+     *
      * @return mixed
      */
     function successJob(JobModel $job) {

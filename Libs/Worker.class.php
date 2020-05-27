@@ -111,8 +111,8 @@ class Worker {
 
             $excuteJob->onError();
         } finally {
-            $this->onJobFinish($jobObject, $work_result);
             $excuteJob->afterHandle();
+            $this->onJobFinish($jobObject, $work_result);
         }
     }
 
@@ -145,24 +145,25 @@ class Worker {
     /**
      * 任务完成后回调
      *
-     * @param Job  $job
-     * @param bool $work_result
+     * @param  JobModel  $job
+     * @param  bool  $work_result
      */
     protected function onJobFinish(JobModel $job, $work_result = true) {
         $this->manager->endJob($job);
 
         //失败时考虑重试
-        if (!$work_result) {
-            if ($job->getAttempts() < $this->options->getMaxRetry()) {
-                $this->onJobRelease($job);
-            }
+        if (!$work_result && $job->getAttempts() < $this->options->getMaxRetry()) {
+            $this->onJobRelease($job);
+        } else {
+            //结束后且无法重试，删除任务
+            $this->manager->deleteJob($job->getId());
         }
     }
 
     /**
      * 任务完成后回调
      *
-     * @param Job $job
+     * @param  JobModel  $job
      */
     protected function onJobSuccess(JobModel $job) {
         $this->manager->successJob($job);
@@ -181,7 +182,7 @@ class Worker {
     /**
      * 任务完成后回调
      *
-     * @param Job $job
+     * @param  JobModel  $job
      */
     protected function onJobRelease(JobModel $job) {
         $this->manager->release($job);
