@@ -47,6 +47,7 @@ class JobModel extends Model {
      * @var
      */
     protected $id;
+    protected $name;
     protected $queue;
     protected $payload;
     protected $attempts;
@@ -69,6 +70,22 @@ class JobModel extends Model {
      */
     public function setId($id) {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param  mixed  $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**

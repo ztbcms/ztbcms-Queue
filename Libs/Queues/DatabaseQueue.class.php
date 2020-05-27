@@ -88,6 +88,7 @@ class DatabaseQueue extends Queue {
 
         $job = new JobModel();
         $job->setId($job_record['id']);
+        $job->setName($job_record['name']);
         $job->setAttempts($job_record['attempts']);
         $job->setAvailableAt($job_record['available_at']);
         $job->setEndTime($job_record['end_time']);
