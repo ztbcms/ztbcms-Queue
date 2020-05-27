@@ -24,6 +24,13 @@ return array(
                 "remark" => "任务列表"
             ),
             array(
+                "route" => "Queue/Manage/faildmain",
+                "type" => 1,
+                "status" => 1,
+                "name" => "异常任务列表",
+                "remark" => "异常任务列表"
+            ),
+            array(
                 "route" => "Queue/Manage/repush",
                 "type" => 0,
                 "status" => 0,
