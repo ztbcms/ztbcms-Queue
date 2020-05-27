@@ -118,8 +118,10 @@
         <el-dialog
                 title="失败原因"
                 :visible.sync="dialogVisible"
-                width="30%">
-            <span>{{showMsg}}</span>
+                width="40%">
+            <span>
+                <pre style="width: 100%;overflow-x:auto">{{showMsg}}</pre>
+            </span>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
