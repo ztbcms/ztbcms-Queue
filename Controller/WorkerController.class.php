@@ -7,6 +7,7 @@
 namespace Queue\Controller;
 
 use Queue\Libs\Queue;
+use Queue\Libs\Utils;
 use Queue\Libs\Worker;
 use Queue\Libs\WorkerOptions;
 
@@ -35,6 +36,7 @@ class WorkerController extends QueueController {
      */
     public function stop() {
         cache('queue_work_stop', '1');
+        Utils::log('Send STOP signal.');
     }
 
 }

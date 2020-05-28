@@ -19,4 +19,8 @@ class Utils {
 
     }
 
+    static function log($msg){
+        echo $msg . "\r\n";
+    }
+
 }

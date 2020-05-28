@@ -54,6 +54,7 @@ class Worker {
 
             //
             if ($this->stopIfNecessary()) {
+                Utils::log("Exit queue.");
                 break;
             }
         }
@@ -97,6 +98,7 @@ class Worker {
      */
     private function runJob(JobModel $jobObject) {
         $work_result = true; // 任务执行结果，默认是成功
+        Utils::log("Processing " . $jobObject->getName());
         $excuteJob = $jobObject->getExcuteJob();
         try {
             $this->onJobStart($jobObject);
@@ -113,6 +115,8 @@ class Worker {
         } finally {
             $excuteJob->afterHandle();
             $this->onJobFinish($jobObject, $work_result);
+
+            Utils::log("Processed " . $jobObject->getName());
         }
     }
 
