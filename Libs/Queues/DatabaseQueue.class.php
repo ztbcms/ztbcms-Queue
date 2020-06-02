@@ -75,16 +75,21 @@ class DatabaseQueue extends Queue {
         $this->db->startTrans();
         $now = Utils::now();
         $job_record = $this->db->where([
-            'status' => JobModel::STATUS_WAITTING,
             'queue' => $queue,
             'available_at' => ['ELT', $now],
             'reserved_at' => 0, //未取出的
-        ])->order('available_at ASC, id ASC')->lock(true)->find();
-        $this->db->commit();
+        ])->order('available_at ASC, id ASC')->find();
 
         if (empty($job_record)) {
             return null;
         }
+
+        //标志取出
+        $res = $this->db->where(['id' => $job_record['id'], 'reserved_at' => 0])->save( ['reserved_at' => $now]);
+        if(!$res){
+            return null;
+        }
+        $this->db->commit();
 
         $job = new JobModel();
         $job->setId($job_record['id']);
@@ -98,12 +103,7 @@ class DatabaseQueue extends Queue {
         $job->setResult($job_record['result']);
         $job->setStartTime($job_record['start_time']);
         $job->setStatus($job_record['status']);
-
-        //标志
-        $this->updateJob($job_record['id'], ['reserved_at' => $now]);
-
-        $this->db->commit();
-
+        
         return $job;
     }
 
