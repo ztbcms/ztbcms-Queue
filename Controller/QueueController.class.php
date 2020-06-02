@@ -19,6 +19,11 @@ class QueueController extends Base {
             echo '私钥不匹配';
             exit();
         }
+
+        if (!IS_CLI) {
+            echo '请用命令行运行！';
+            exit;
+        }
     }
 
 
