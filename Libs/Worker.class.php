@@ -83,7 +83,7 @@ class Worker {
      * @return bool
      */
     private function stopIfNecessary() {
-        $stop_signal = cache('queue_work_stop');
+        $stop_signal = cache('__queue_work_stop__');
         if ($stop_signal == Queue::SIGNAL_STOP) {
             return true;
         }
@@ -134,7 +134,7 @@ class Worker {
      */
     private function beforeRun() {
         //清除重启
-        cache('queue_work_stop', null);
+        cache('__queue_work_stop__', null);
     }
 
     /**
