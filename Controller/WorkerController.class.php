@@ -35,7 +35,7 @@ class WorkerController extends QueueController {
      * 平滑停止监听任务队列
      */
     public function stop() {
-        cache('queue_work_stop', '1');
+        cache('queue_work_stop', Queue::SIGNAL_STOP);
         Utils::log('Send STOP signal.');
     }
 
