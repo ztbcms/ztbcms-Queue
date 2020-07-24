@@ -98,7 +98,7 @@ class Worker {
      */
     private function runJob(JobModel $jobObject) {
         $work_result = true; // 任务执行结果，默认是成功
-        Utils::log("Processing " . $jobObject->getName());
+        Utils::log("Processing [" . $jobObject->getName().'] JobId:'.$jobObject->getId());
         $excuteJob = $jobObject->getExcuteJob();
         try {
             $this->onJobStart($jobObject);
