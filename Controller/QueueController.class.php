@@ -13,12 +13,6 @@ class QueueController extends Base {
 
     protected function _initialize() {
         parent::_initialize();
-        //私钥校验
-        $queue_secret_key = I('get._qsk', '');
-        if ($queue_secret_key != C('QUEUE_SECRET_KEY')) {
-            echo '私钥不匹配';
-            exit();
-        }
 
         if (!IS_CLI) {
             echo '请用命令行运行！';
